@@ -1,0 +1,33 @@
+diff --git a/node_modules/directus/dist/env.js b/node_modules/directus/dist/env.js
+index 86ecad2..ed09901 100644
+--- a/node_modules/directus/dist/env.js
++++ b/node_modules/directus/dist/env.js
+@@ -143,6 +143,7 @@ const allowedEnvironmentVars = [
+     'AUTH_.+_IDP.+',
+     'AUTH_.+_SP.+',
+     // extensions
++    'PACKAGE_FILE_LOCATION',
+     'EXTENSIONS_PATH',
+     'EXTENSIONS_AUTO_RELOAD',
+     // messenger
+@@ -226,6 +227,7 @@ const defaults = {
+     CACHE_VALUE_MAX_SIZE: false,
+     AUTH_PROVIDERS: '',
+     AUTH_DISABLE_DEFAULT: false,
++    PACKAGE_FILE_LOCATION: '.',
+     EXTENSIONS_PATH: './extensions',
+     EXTENSIONS_AUTO_RELOAD: false,
+     EMAIL_FROM: 'no-reply@directus.io',
+diff --git a/node_modules/directus/dist/extensions.js b/node_modules/directus/dist/extensions.js
+index 838bb39..5a3ba22 100644
+--- a/node_modules/directus/dist/extensions.js
++++ b/node_modules/directus/dist/extensions.js
+@@ -246,7 +246,7 @@ class ExtensionManager {
+         }
+     }
+     async getExtensions() {
+-        const packageExtensions = await (0, node_1.getPackageExtensions)('.');
++        const packageExtensions = await (0, node_1.getPackageExtensions)(env_1.default.PACKAGE_FILE_LOCATION);
+         const localPackageExtensions = await (0, node_1.resolvePackageExtensions)(env_1.default.EXTENSIONS_PATH);
+         const localExtensions = await (0, node_1.getLocalExtensions)(env_1.default.EXTENSIONS_PATH);
+         return [...packageExtensions, ...localPackageExtensions, ...localExtensions].filter((extension) => env_1.default.SERVE_APP || constants_1.APP_EXTENSION_TYPES.includes(extension.type) === false);
