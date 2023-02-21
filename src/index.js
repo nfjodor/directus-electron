@@ -11,8 +11,8 @@ if (config.parsed.EXTENSIONS_PATH) {
 if (config.parsed.STORAGE_LOCAL_ROOT) {
   process.env.STORAGE_LOCAL_ROOT = path.resolve(__dirname, '../', config.parsed.STORAGE_LOCAL_ROOT);
 }
-if (config.parsed.PACKAGE_EXTENSIONS_PATH) {
-  process.env.PACKAGE_EXTENSIONS_PATH = path.resolve(__dirname, '../', config.parsed.PACKAGE_EXTENSIONS_PATH);
+if (config.parsed.PACKAGE_FILE_LOCATION) {
+  process.env.PACKAGE_FILE_LOCATION = path.resolve(__dirname, '../', config.parsed.PACKAGE_FILE_LOCATION);
 }
 
 const directus = require("directus/server");
