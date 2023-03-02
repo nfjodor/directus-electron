@@ -8,8 +8,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\"",
-    "postinstall": "patch-package"
+    "lint": "eslint"
   },
   "keywords": [],
   "author": {
@@ -18,7 +17,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "directus": "9.22.4",
+    "directus": "^9.23.1",
     "dotenv": "^16.0.3",
     "electron-squirrel-startup": "^1.0.0",
     "fs-extra": "^11.1.0"
@@ -29,7 +28,9 @@
     "@electron-forge/maker-rpm": "^6.0.5",
     "@electron-forge/maker-squirrel": "^6.0.5",
     "@electron-forge/maker-zip": "^6.0.5",
-    "electron": "23.0.0",
-    "patch-package": "^6.5.1"
+    "electron": "^23.1.1",
+    "eslint": "^8.35.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5"
   }
 }
