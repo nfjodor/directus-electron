@@ -1,11 +1,25 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const {
+  app, BrowserWindow, ipcMain, dialog,
+} = require('electron');
 const path = require('path');
 const electronSquirrelStartup = require('electron-squirrel-startup');
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('directus', process.execPath, [path.resolve(process.argv[1])]);
+  }
+} else {
+  app.setAsDefaultProtocolClient('directus');
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (electronSquirrelStartup) {
   app.quit();
 }
+
+let mainWindow;
+let isSplashAnimationEnded;
+let deeplinkingUrl;
 
 const prepareDirectus = () => {
   // eslint-disable-next-line global-require
@@ -21,18 +35,17 @@ const prepareDirectus = () => {
 };
 
 const createWindow = async () => {
-  let isMainWindowVisible = false;
-  const handleHideSplashScreen = (splashScreen, mainWindow) => {
-    if (!isMainWindowVisible) {
-      isMainWindowVisible = true;
+  const handleHideSplashScreen = (splashScreen, window) => {
+    if (!isSplashAnimationEnded) {
+      isSplashAnimationEnded = true;
       return;
     }
     splashScreen.close();
-    mainWindow.show();
-    mainWindow.focus();
+    window.show();
+    window.focus();
   };
 
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     show: false,
@@ -58,10 +71,28 @@ const createWindow = async () => {
 
   splashScreen.loadFile(path.join(__dirname, 'splash.html'));
   await prepareDirectus().startServer();
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 10000);
+  });
   mainWindow.loadURL('http://localhost:8055');
 
   if (!app.isPackaged) mainWindow.webContents.openDevTools();
 };
+
+app.on('second-instance', (_, commandLine) => {
+  if (process.platform !== 'darwin') {
+    // Find the arg that is our custom protocol url and store it
+    deeplinkingUrl = commandLine.find((arg) => arg.startsWith('directus://'));
+  }
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+
+  dialog.showErrorBox('Welcome Back', `You arrived from: ${deeplinkingUrl}`);
+});
 
 app.whenReady().then(async () => {
   createWindow();
@@ -69,6 +100,11 @@ app.whenReady().then(async () => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+app.on('open-url', (_, url) => {
+  deeplinkingUrl = url;
+  dialog.showErrorBox('Welcome Back', `You arrived from: ${deeplinkingUrl}`);
 });
 
 app.on('window-all-closed', () => {
