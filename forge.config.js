@@ -1,5 +1,14 @@
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {
+    icon: 'favicon.ico',
+    protocols: [
+      {
+        name: 'Directus app',
+        protocol: 'directus',
+        schemes: ['directus'],
+      },
+    ],
+  },
   rebuildConfig: {},
   makers: [
     {
@@ -12,7 +21,9 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        mimeType: ['x-scheme-handler/directus'],
+      },
     },
     {
       name: '@electron-forge/maker-rpm',

@@ -14,20 +14,21 @@
     transition: background-color var(--transition-time);
   }
   body:has(video.loaded) { background: #151f2d }
-  body:has(video.ended) span { opacity: 1 }
+  body:has(video.ended) span { opacity: 1; animation-play-state: running }
   span {
     position: absolute;
-    height: 15svh;
+    height: 8svh;
     aspect-ratio: 1;
     top: 50%;
     left: 50%;
-    translate: -50% calc(-50% + 30svh);
+    translate: -50% calc(-50% + 32svh);
     border-radius: 50%;
     border: 1.5svh solid transparent;
     border-right-color: white;
     opacity: 0;
     animation: spin 0.5s linear infinite;
-    transition: opacity var(--transition-time);
+    animation-play-state: paused;
+    transition: opacity var(--transition-time) linear calc(var(--transition-time) / 2);
   }
   video {
     display: block;
@@ -35,10 +36,8 @@
     width: 100svw;
     height: 100svh;
     opacity: 0;
-    transition: translate var(--transition-time) ease-out;
   }
-  video.loaded { animation: videoLoaded var(--transition-time) ease forwards }
-  video.ended { translate: 0 -3% }
+  video.loaded { animation: videoLoaded var(--transition-time) forwards }
   @keyframes videoLoaded { 0% { opacity: 0 } 100% { opacity: 1 } }
   @keyframes spin { 0% { rotate: 0deg } 100% { rotate: 360deg } }
 </style>
@@ -53,7 +52,6 @@
     };
     video.onended = () => {
       video.classList.add('ended');
-      window.postMessage({ some: 'message' });
       electronAPI.send('onSplashEnded', true);
     }
   </script>
